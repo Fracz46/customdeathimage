@@ -1,0 +1,242 @@
+{
+	"geode": "4.3.1",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "fracz.custom_death_image",
+	"name": "Custom Death Image",
+	"version": "1.3.4",
+	"developer": "Fracz",
+	"description": "Shows a custom image when you die.",
+	"repository": "https://github.com/fracz46/CustomDeathImage",
+	"dependencies": [],
+	"resources": {
+		"files": [
+			"resources/*.png",
+			"resources/memes/*.png",
+			"resources/memes/*.mp3",
+			"resources/memes/*.ogg"
+		]
+	},
+	"settings": {
+		"rare-chance": {
+			"name": "Rare Image Chance(NO IMAGE YET)",
+			"description": "Chance (%) of showing the rare death image (0 = never, 100 = always)",
+			"type": "int",
+			"default": 1,
+			"min": 0,
+			"max": 100,
+			"control": {
+				"arrows": true,
+				"slider": true,
+				"slider-step": 1
+			}
+		},
+		"pip-mode": {
+			"name": "Enable PiP Mode",
+			"description": "Show a small version of the death image in the corner while playing",
+			"type": "bool",
+			"default": false
+		},
+		"pip-position": {
+			"name": "PiP Base Position",
+			"description": "Choose which corner to place the PiP window",
+			"type": "int",
+			"default": 0,
+			"min": 0,
+			"max": 3,
+			"control": {
+				"type": "enum",
+				"items": {
+					"0": "Top Right",
+					"1": "Top Left",
+					"2": "Bottom Right",
+					"3": "Bottom Left"
+				}
+			}
+		},
+		"pip-offset-x": {
+			"name": "PiP X Offset",
+			"description": "Adjust horizontal position (negative = left, positive = right)",
+			"type": "int",
+			"default": 0,
+			"min": -500,
+			"max": 500,
+			"control": {
+				"type": "slider"
+			}
+		},
+		"pip-offset-y": {
+			"name": "PiP Y Offset",
+			"description": "Adjust vertical position (negative = down, positive = up)",
+			"type": "int",
+			"default": 0,
+			"min": -500,
+			"max": 500,
+			"control": {
+				"type": "slider"
+			}
+		},
+		"pip-size": {
+			"name": "PiP Size",
+			"description": "Size of the PiP window as a percentage of screen width",
+			"type": "int",
+			"default": 20,
+			"min": 5,
+			"max": 50,
+			"control": {
+				"type": "slider"
+			}
+		},
+		"pip-size-multiplier": {
+			"name": "PiP Size Multiplier",
+			"description": "Additional size multiplier for fine-tuning",
+			"type": "float",
+			"default": 1.0,
+			"min": 0.1,
+			"max": 3.0,
+			"control": {
+				"type": "slider"
+			}
+		},
+		"pip-padding": {
+			"name": "PiP Edge Padding",
+			"description": "Minimum distance from screen edges",
+			"type": "int",
+			"default": 10,
+			"min": 0,
+			"max": 50
+		},
+		"meme-mode": {
+			"name": "Meme Mode(STILL WIP)",
+			"description": "Enable for random meme images and sounds on death (overrides other settings)",
+			"type": "bool",
+			"default": false
+		},
+		"use-custom-image": {
+			"name": "Use Custom Image",
+			"description": "Enable to use your own custom death image(s), default is zoink's golden freddy.",
+			"type": "bool",
+			"default": false
+		},
+		"use-folder": {
+			"name": "Use Image Folder",
+			"description": "Enable to randomly cycle between images in a folder",
+			"type": "bool",
+			"default": false
+		},
+		"show-in-practice": {
+			"name": "Show in Practice Mode",
+			"description": "Show death image in practice mode",
+			"type": "bool",
+			"default": false
+		},
+		"custom-image-path": {
+			"name": "Custom Image Path",
+			"description": "Select your custom death image",
+			"type": "string",
+			"default": "",
+			"control": {
+				"type": "button",
+				"text": "Select Image",
+				"icon": "plus",
+				"click": "file-selector",
+				"filters": "PNG Image (*.png)|*.png"
+			}
+		},
+		"custom-folder-path": {
+			"name": "Custom Folder Path",
+			"description": "Select folder containing death images (PNG only)",
+			"type": "string",
+			"default": "",
+			"control": {
+				"type": "button",
+				"text": "Select Folder",
+				"icon": "plus",
+				"click": "folder-selector"
+			}
+		},
+		"min-percentage": {
+			"name": "Minimum Percentage",
+			"description": "Only show death image after reaching this percentage (0 to disable)",
+			"type": "int",
+			"default": 0,
+			"min": 0,
+			"max": 100
+		},
+		"death-duration": {
+			"name": "Death Image Duration",
+			"description": "How long to show the death image (in seconds)",
+			"type": "float",
+			"default": 1.0,
+			"min": 0.1,
+			"max": 5.0
+		},
+		"use-custom-sound": {
+			"name": "Use Custom Death Sound",
+			"description": "Enable to use a custom sound when dying",
+			"type": "bool",
+			"default": false
+		},
+		"custom-sound-path": {
+			"name": "Custom Death Sound Path",
+			"description": "Path to the custom sound file (.ogg or .mp3)",
+			"type": "string",
+			"default": "",
+			"control": {
+				"type": "file",
+				"filters": "Audio Files (*.ogg;*.mp3)|*.ogg;*.mp3"
+			}
+		},
+		"use-image-specific-sounds": {
+			"name": "Use Image-Specific Sounds",
+			"description": "Enable to use specific sounds for specific images (only works with custom folder, add the image's name with the extension of .mp3 or .ogg)",
+			"type": "bool",
+			"default": false
+		},
+		"pip-use-custom-image": {
+			"name": "Use Custom PiP Image",
+			"description": "Use a custom image for the PiP display",
+			"type": "bool",
+			"default": false
+		},
+		"pip-image-path": {
+			"name": "PiP Image Path",
+			"description": "Path to the custom PiP image",
+			"type": "string",
+			"default": ""
+		},
+		"other-settings": {
+			"name": "Other Settings",
+			"type": "folder",
+			"description": "Other mod settings",
+			"contents": {
+				"show-in-practice": {
+					"name": "Show in Practice Mode",
+					"description": "Show death image in practice mode",
+					"type": "bool",
+					"default": false
+				},
+				"death-duration": {
+					"name": "Death Image Duration",
+					"description": "How long to show the death image (in seconds)",
+					"type": "float",
+					"default": 1.0,
+					"min": 0.1,
+					"max": 5.0
+				},
+				"min-percentage": {
+					"name": "Minimum Percentage",
+					"description": "Only show death image after reaching this percentage (0 to disable)",
+					"type": "int",
+					"default": 0,
+					"min": 0,
+					"max": 100
+				}
+			}
+		}
+	}
+}
