@@ -122,18 +122,29 @@ class $modify(PlayerObject) {
     void playerDestroyed(bool p0) {
         stopSound();
         PlayerObject::playerDestroyed(p0);
+        
+        auto* mod = Mod::get();
+        if (!mod || !mod->getSettingValue<bool>("enabled")) return;
+
         auto* playLayer = PlayLayer::get();
         if (!playLayer) return;
-        auto* mod = Mod::get();
-        if (!mod) {
-            log::error("Failed to get mod instance");
-            return;
+
+        // Check if we're in dual mode and this is the second player
+        if (playLayer->m_player2) {  // If player2 exists, we're in dual mode
+            if (this != playLayer->m_player1) {
+                return; // Skip death effects for second player in dual mode
+            }
         }
 
-        if (!mod->getSettingValue<bool>("show-in-practice") && playLayer->m_isPracticeMode) {
-            log::info("Not showing death image or playing sounds in practice mode");
-            return;
+        // Check if we're in Globed multiplayer and this is not the local player
+        if (auto* globedMod = Loader::get()->getLoadedMod("geode.globed")) {
+            // For Globed, we can check if this player is not the main player
+            if (this != playLayer->m_player1) {
+                return; // Skip death effects for other players in multiplayer
+            }
         }
+
+        if (!mod->getSettingValue<bool>("show-in-practice") && playLayer->m_isPracticeMode) return;
 
         if (mod->getSettingValue<bool>("meme-mode")) {
             auto memesPath = mod->getResourcesDir() / "memes";
@@ -281,8 +292,8 @@ class $modify(PlayerObject) {
         float scale = std::max(scaleX, scaleY);
         
         deathImage->setScale(scale);
-        deathImage->setAnchorPoint(ccp(0.5f, 0.5f));
-        deathImage->setPosition(ccp(winSize.width / 2, winSize.height / 2));
+            deathImage->setAnchorPoint(ccp(0.5f, 0.5f));
+            deathImage->setPosition(ccp(winSize.width / 2, winSize.height / 2));
         
         ccBlendFunc blend;
         blend.src = GL_SRC_ALPHA;
@@ -332,13 +343,13 @@ class $modify(PlayerObject) {
                 ));
                 
                 deathImage->runAction(CCSpawn::create(scaleUp, fadeIn, nullptr));
-                deathImage->runAction(CCSequence::create(
+            deathImage->runAction(CCSequence::create(
                     CCDelayTime::create(0.1f),
                     scaleNormal,
                     delay,
                     fadeOut,
-                    nullptr
-                ));
+                nullptr
+            ));
                 
                 auto jumpscareSound = Mod::get()->getResourcesDir() / "jumpsc.mp3";
                 if (std::filesystem::exists(jumpscareSound)) {
@@ -369,6 +380,9 @@ class $modify(PlayerObject) {
         auto* engine = FMODAudioEngine::sharedEngine();
         if (!engine) return;
 
+        auto* mod = Mod::get();
+        if (!mod) return;
+
         m_fields->currentSoundPath = soundPath.string();
         
         FMOD::Sound* sound = nullptr;
@@ -387,7 +401,8 @@ class $modify(PlayerObject) {
                 &channel
             ) == FMOD_OK) {
                 if (channel) {
-                    channel->setVolume(1.0f);
+                    float volume = mod->getSettingValue<float>("sound-volume");
+                    channel->setVolume(volume);
                 }
             }
         }
@@ -423,6 +438,9 @@ class $modify(PlayLayer) {
 
     bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
         if (!PlayLayer::init(level, useReplay, dontCreateObjects)) return false;
+        
+        auto* mod = Mod::get();
+        if (!mod || !mod->getSettingValue<bool>("enabled")) return true;
         
         auto dispatcher = CCDirector::sharedDirector()->getKeyboardDispatcher();
         if (dispatcher) {
@@ -574,7 +592,7 @@ class $modify(PlayLayer) {
 
     void setupPiP() {
         auto* mod = Mod::get();
-        if (!mod->getSettingValue<bool>("pip-mode")) return;
+        if (!mod || !mod->getSettingValue<bool>("enabled") || !mod->getSettingValue<bool>("pip-mode")) return;
 
         std::filesystem::path imagePath;
         if (mod->getSettingValue<bool>("pip-use-custom-image")) {
